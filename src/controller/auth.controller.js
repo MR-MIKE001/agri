@@ -62,11 +62,14 @@ res.cookie("refreshToken", refreshToken, {
   secure: process.env.NODE_ENV === "production",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
-
+res.cookie("token", token, {
+ httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 24 * 60 * 60 * 1000,
+})
 // Response
 return res.status(201).json({
   message: "User created successfully",
-  token,
   user: {
     id: user._id,
     fullName: user.fullName,
@@ -121,7 +124,11 @@ res.cookie("refreshToken", refreshToken, {
   secure: process.env.NODE_ENV === "production",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
-
+res.cookie("token", token, {
+ httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  maxAge: 24 * 60 * 60 * 1000,
+})
 // Response
 return res.status(200).json({
   message: "User signed in successfully",

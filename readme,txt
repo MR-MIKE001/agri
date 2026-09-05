@@ -1,0 +1,18 @@
+http://localhost:3000/api/auth/profile headers:{
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOWMyNmQ3OWQzYWM2YTllZjUxNzI4NiIsInJvbGUiOiJmYXJtZXIiLCJpYXQiOjE3ODg2MTk2NTcsImV4cCI6MTc4ODYyMzI1N30.WmWJ9VKg2MM44xEW_2k5IgYH4UASCs_A2AGeGrRuZqo
+}
+
+response: {"message":"Profile accessed successfully","user":{"id":"6a9c26d79d3ac6a9ef517286","role":"farmer","iat":1788619657,"exp":1788623257}};
+
+
+http://localhost:3000/api/auth/signin body:{
+  "email": "jane.doe@example.com",
+  "password": "SecurePassword123!"
+}
+
+response:{"message":"User signed in successfully",
+"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOWMyNmQ3OWQzYWM2YTllZjUxNzI4NiIsInJvbGUiOiJmYXJtZXIiLCJpYXQiOjE3ODg2MjQ0MTUsImV4cCI6MTc4ODYyODAxNX0.48ZYPpcilsNrnEpoZBINrhCOdGimC8zpVtV3g57D24A","user":{"id":"6a9c26d79d3ac6a9ef517286","fullName":"Jane Doe","email":"jane.doe@example.com","phone":"+2348012345678","role":"farmer"}}
+
+http://localhost:3000/api/transports headers:{}
+
+response:{"message":"Transport request created successfully","transportRequest":{"productType":"Cassava Tubers","quantity":150,"pickupLocation":"Farm Block 4, Idiroko Road, Ota, Ogun State","deliveryLocation":"Agro Processing Hub, Mile 12 Market, Lagos","requestedBy":"6a9c26d79d3ac6a9ef517286","preferredPickupDate":"2026-09-10T08:00:00.000Z","isAccepted":false,"isInTransit":false,"isDelivered":false,"isDelete":false,"_id":"6a9c426ad619e21dd54c9b61","requestDate":"2026-09-05T16:25:14.820Z","__v":0}}

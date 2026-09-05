@@ -1,0 +1,59 @@
+# Dependencies (Never commit node_modules)
+/node_modules
+/.pnp
+.pnp.js
+
+# Environment Variables & Secrets (CRITICAL for security)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.pem
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Database & Storage
+*.sqlite
+*.sqlite-journal
+/*.db
+
+# Prisma (Keep schema, ignore generated files if needed)
+/prisma/migrations/dev_lock.json
+
+# Build Outputs (e.g., Babel, TypeScript, or frontend builds)
+/dist
+/build
+/out
+/coverage
+
+# Operating System & Editor Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+
+# IDE & Editor Configurations
+/.vscode/*
+!/.vscode/settings.json
+!/.vscode/tasks.json
+!/.vscode/launch.json
+!/.vscode/extensions.json
+/.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

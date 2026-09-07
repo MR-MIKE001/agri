@@ -13,7 +13,11 @@ const PORT = process.env.PORT || 3000;
 connect(process.env.MONGODB_URI);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+  origin: "*", // Allow all origins
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+     credentials: true
+}));
 app.use(cookie());
 app.get("/api",(req, res) => {
   res.json({ message: "Welcome to the API!" });

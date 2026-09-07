@@ -56,17 +56,19 @@ const user = await User.create({
 // Generate tokens
 const { token, refreshToken } = generateToken(user);
 
-// Set cookie
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: true, 
+  sameSite: "none",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
+
 res.cookie("token", token, {
- httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  httpOnly: true,
+  secure: true, 
+  sameSite: "none",
   maxAge: 24 * 60 * 60 * 1000,
-})
+});
 // Response
 return res.status(201).json({
   message: "User created successfully",
@@ -117,18 +119,19 @@ if (!isMatch) {
 
 // Generate tokens
 const { token, refreshToken } = generateToken(user);
-
-// Set cookie
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  secure: true, 
+  sameSite: "none",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
+
 res.cookie("token", token, {
- httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
+  httpOnly: true,
+  secure: true, 
+  sameSite: "none",
   maxAge: 24 * 60 * 60 * 1000,
-})
+});
 // Response
 return res.status(200).json({
   message: "User signed in successfully",

@@ -92,17 +92,17 @@ message: error.message || "Internal server error",
 
 export const signin = async (req, res) => {
 try {
-const { email, password } = req.body;
+const { phone, password } = req.body;
 
 // Validate input
-if (!email || !password) {
+if (!phone || !password) {
   return res.status(400).json({
-    message: "Email and password are required",
+    message: "Phone number and password are required",
   });
 }
 
 // Find user
-const user = await User.findOne({ email });
+const user = await User.findOne({ phone });
 if (!user) {
   return res.status(404).json({
     message: "User not found",

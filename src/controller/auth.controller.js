@@ -1,7 +1,8 @@
 import { User } from "../model/model.js";
 import { comparePassword, hashPassword } from "../utili/bcrypt.js";
 import { generateToken } from "../middleware/jwt.js";
-
+import { config } from "dotenv";
+config();
 
 export const signup = async (req, res) => {
 try {
@@ -58,15 +59,15 @@ const { token, refreshToken } = generateToken(user);
 
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
-  secure: true, 
-  sameSite: "none",
+ secure: process.env.NODE_ENV === "production" ? true : false, 
+  sameSite:process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
 res.cookie("token", token, {
   httpOnly: true,
-  secure: true, 
-  sameSite: "none",
+  secure: process.nv.NODE_ENV === "production" ? true : false, 
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 24 * 60 * 60 * 1000,
 });
 // Response
@@ -121,21 +122,20 @@ if (!isMatch) {
 const { token, refreshToken } = generateToken(user);
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
-  secure: true, 
-  sameSite: "none",
+  secure: process.env.NODE_ENV === "production" ? true : false, 
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
 res.cookie("token", token, {
   httpOnly: true,
-  secure: true, 
-  sameSite: "none",
+  secure: process.env.NODE_ENV === "production" ? true : false, 
+  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   maxAge: 24 * 60 * 60 * 1000,
 });
 // Response
 return res.status(200).json({
   message: "User signed in successfully",
-  token,
   user: {
     id: user._id,
     fullName: user.fullName,

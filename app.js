@@ -8,13 +8,14 @@ config();
 const app = express();
 import authRouter from "./src/rounter/auth.router.js";
 import TransportRouter from "./src/rounter/transport.router.js";
+import driverRouter from "./src/rounter/driver.router.js";
 const PORT = process.env.PORT || 3000;
 
 connect(process.env.MONGODB_URI);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors({
-  origin: ["http://localhost:3000/"],
+  origin:"*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
      credentials: true
 }));
@@ -24,6 +25,7 @@ app.get("/api",(req, res) => {
 });
 app.use("/api/auth",authRouter);
 app.use("/api",TransportRouter)
+app.use("/api/driver",driverRouter)
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

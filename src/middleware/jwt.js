@@ -5,7 +5,7 @@ import { config } from "dotenv";
 config();
 
 export const generateToken=(user)=>{
-    const token=sign({id:user._id,role:user.role},process.env.JWT_SECRET,{expiresIn:'1h'});
+    const token=sign({id:user._id,role:user.role},process.env.JWT_SECRET,{expiresIn:'24h'});
     const refreshToken=sign({id:user._id,role:user.role},process.env.JWT_REFRESH_SECRET,{expiresIn:'7d'});
     return { token, refreshToken };
 }

@@ -73,6 +73,7 @@ res.cookie("token", token, {
 // Response
 return res.status(201).json({
   message: "User created successfully",
+  token,
   user: {
     id: user._id,
     fullName: user.fullName,
@@ -136,6 +137,7 @@ res.cookie("token", token, {
 // Response
 return res.status(200).json({
   message: "User signed in successfully",
+  token,
   user: {
     id: user._id,
     fullName: user.fullName,

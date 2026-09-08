@@ -6,6 +6,7 @@ response: {"message":"Profile accessed successfully","user":{"id":"6a9c26d79d3ac
 
 
 http://localhost:3000/api/auth/signin body:{
+"phone":"+2348012345678",
   "email": "jane.doe@example.com",
   "password": "SecurePassword123!"
 }

@@ -22,7 +22,7 @@ router.post("/refresh-token", verifyRefreshToken, (req, res) => {
     sameSite:"none" ,
     maxAge: 24 * 60 * 60 * 1000,
   });
-  res.status(200).json({ message: "Token refreshed successfully", token });
+  res.status(200).json({ message: "Token refreshed successfully", token ,refreshToken });
 });
 
 export default router;

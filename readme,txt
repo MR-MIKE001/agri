@@ -1,19 +1,185 @@
-http://localhost:3000/api/auth/profile headers:{
-    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOWMyNmQ3OWQzYWM2YTllZjUxNzI4NiIsInJvbGUiOiJmYXJtZXIiLCJpYXQiOjE3ODg2MTk2NTcsImV4cCI6MTc4ODYyMzI1N30.WmWJ9VKg2MM44xEW_2k5IgYH4UASCs_A2AGeGrRuZqo
-}
-
-response: {"message":"Profile accessed successfully","user":{"id":"6a9c26d79d3ac6a9ef517286","role":"farmer","iat":1788619657,"exp":1788623257}};
-
-
-http://localhost:3000/api/auth/signin body:{
-"phone":"+2348012345678",
+Agro Transport API DocumentationA RESTful API built for managing agricultural logistics, connecting farmers, buyers, sellers, and drivers for seamless produce transportation.Table of ContentsOverview & Tech StackBase URLsUser RolesEnvironment VariablesData Models SchemaAPI EndpointsAuthentication & User ManagementTransport Requests (Farmers / Buyers / Sellers)Driver OperationsInstallation & SetupOverview & Tech StackRuntime: Node.jsLanguage: JavaScript / TypeScriptDatabase: MongoDB (via Mongoose ORM)Authentication: JSON Web Tokens (JWT) & Passwords hashed with bcryptDeployment Platform: RenderBase URLsLocal Development: http://localhost:3000Production Server: [https://agri-bpap.onrender.com](https://agri-bpap.onrender.com)User RolesThe API enforces role-based access control (RBAC). Acceptable user roles are:adminbuyerfarmersellerdriverEnvironment VariablesCreate a .env file in the root directory with the following variables:Code snippetPORT=3000
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/agro_transport?retryWrites=true&w=majority
+JWT_SECRET=your_super_secret_jwt_key
+JWT_EXPIRES_IN=24h
+Data Models SchemaUser Schema (User)FieldTypeRequiredDefaultNotesfullNameStringYesN/AFull name of the useremailStringYesN/AUnique email addresspasswordStringYesN/AHashed passwordphoneStringYesN/AUnique phone numberroleStringYesN/AMust be one of allowed rolescreatedAtDateAutoDate.nowAccount creation timestampTransport Request Schema (TransportRequest)FieldTypeRequiredDefaultNotesproductTypeStringYesN/AE.g., "Cassava Tubers", "Maize"quantityNumberYesN/AWeight/quantity measurepickupLocationStringYesN/AFull pickup addressdeliveryLocationStringYesN/ADestination addressrequestedByObjectIdYesN/ARefers to User IDacceptedByObjectIdNonullRefers to Driver User IDpreferredPickupDateDateYesN/AScheduled pickup dateisAcceptedBooleanNofalseAccepted by driverisInTransitBooleanNofalseTransit statusisDeliveredBooleanNofalseDelivery completion statusisDeleteBooleanNofalseSoft deletion flagrequestDateDateAutoDate.nowCreation timestampAPI EndpointsAuthentication & User Management1. Register UserCreates a new user account on the platform.Endpoint: POST /api/auth/signupHeaders: Content-Type: application/jsonRequest Body:JSON{
+  "fullName": "Jane Doe",
   "email": "jane.doe@example.com",
+  "password": "SecurePassword123!",
+  "phone": "+2348012345678",
+  "role": "farmer"
+}
+Response (201 Created):JSON{
+  "message": "User registered successfully"
+}
+2. Sign InAuthenticates a user using their phone number and password.Endpoint: POST /api/auth/signinHeaders: Content-Type: application/jsonRequest Body:JSON{
+  "phone": "+2348012345678",
   "password": "SecurePassword123!"
 }
-
-response:{"message":"User signed in successfully",
-"token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOWMyNmQ3OWQzYWM2YTllZjUxNzI4NiIsInJvbGUiOiJmYXJtZXIiLCJpYXQiOjE3ODg2MjQ0MTUsImV4cCI6MTc4ODYyODAxNX0.48ZYPpcilsNrnEpoZBINrhCOdGimC8zpVtV3g57D24A","user":{"id":"6a9c26d79d3ac6a9ef517286","fullName":"Jane Doe","email":"jane.doe@example.com","phone":"+2348012345678","role":"farmer"}}
-
-http://localhost:3000/api/transports headers:{}
-
-response:{"message":"Transport request created successfully","transportRequest":{"productType":"Cassava Tubers","quantity":150,"pickupLocation":"Farm Block 4, Idiroko Road, Ota, Ogun State","deliveryLocation":"Agro Processing Hub, Mile 12 Market, Lagos","requestedBy":"6a9c26d79d3ac6a9ef517286","preferredPickupDate":"2026-09-10T08:00:00.000Z","isAccepted":false,"isInTransit":false,"isDelivered":false,"isDelete":false,"_id":"6a9c426ad619e21dd54c9b61","requestDate":"2026-09-05T16:25:14.820Z","__v":0}}
+Response (200 OK):JSON{
+  "message": "User signed in successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjZhOWMyNmQ3OWQzYWM2YTllZjUxNzI4NiIsInJvbGUiOiJmYXJtZXIiLCJpYXQiOjE3ODg2MjQ0MTUsImV4cCI6MTc4ODYyODAxNX0.48ZYPpcilsNrnEpoZBINrhCOdGimC8zpVtV3g57D24A",
+  "user": {
+    "id": "6a9c26d79d3ac6a9ef517286",
+    "fullName": "Jane Doe",
+    "email": "jane.doe@example.com",
+    "phone": "+2348012345678",
+    "role": "farmer"
+  }
+}
+3. Get User ProfileRetrieves authentication details of the current logged-in user.Endpoint: GET /api/auth/profileHeaders: Authorization: <JWT_TOKEN>Response (200 OK):JSON{
+  "message": "Profile accessed successfully",
+  "user": {
+    "id": "6a9c26d79d3ac6a9ef517286",
+    "role": "farmer",
+    "iat": 1788619657,
+    "exp": 1788623257
+  }
+}
+Transport Requests (Farmers / Buyers / Sellers)1. Create Transport RequestPosts a new logistics request for agricultural products.Endpoint: POST /api/transportsHeaders:Authorization: <JWT_TOKEN>Content-Type: application/jsonRequest Body:JSON{
+  "productType": "Cassava Tubers",
+  "quantity": 150,
+  "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+  "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+  "preferredPickupDate": "2026-09-10T08:00:00.000Z"
+}
+Response (201 Created):JSON{
+  "message": "Transport request created successfully",
+  "transportRequest": {
+    "_id": "6a9c426ad619e21dd54c9b61",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "6a9c26d79d3ac6a9ef517286",
+    "preferredPickupDate": "2026-09-10T08:00:00.000Z",
+    "isAccepted": false,
+    "isInTransit": false,
+    "isDelivered": false,
+    "isDelete": false,
+    "requestDate": "2026-09-05T16:25:14.820Z",
+    "__v": 0
+  }
+}
+2. Get User's Transport RequestsReturns all non-deleted transport requests created by the authenticated user.Endpoint: GET /api/transportsHeaders: Authorization: <JWT_TOKEN>Response (200 OK):JSON[
+  {
+    "_id": "6a9c426ad619e21dd54c9b61",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "6a9c26d79d3ac6a9ef517286",
+    "preferredPickupDate": "2026-09-10T08:00:00.000Z",
+    "isAccepted": false,
+    "isInTransit": false,
+    "isDelivered": false,
+    "isDelete": false,
+    "requestDate": "2026-09-05T16:25:14.820Z"
+  }
+]
+3. Get Transport Request by IDFetches details of a single transport request.Endpoint: GET /api/transports/:idHeaders: Authorization: <JWT_TOKEN>Response (200 OK):JSON{
+  "_id": "6a9c426ad619e21dd54c9b61",
+  "productType": "Cassava Tubers",
+  "quantity": 150,
+  "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+  "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+  "requestedBy": "6a9c26d79d3ac6a9ef517286",
+  "preferredPickupDate": "2026-09-10T08:00:00.000Z",
+  "isAccepted": false,
+  "isInTransit": false,
+  "isDelivered": false,
+  "isDelete": false,
+  "requestDate": "2026-09-05T16:25:14.820Z"
+}
+4. Update Transport RequestUpdates fields of an existing transport request by ID.Endpoint: PUT /api/transports/:idHeaders:Authorization: <JWT_TOKEN>Content-Type: application/jsonRequest Body:JSON{
+  "quantity": 200,
+  "preferredPickupDate": "2026-09-12T08:00:00.000Z"
+}
+Response (200 OK):JSON{
+  "message": "Transport request updated successfully",
+  "transportRequest": {
+    "_id": "6a9c426ad619e21dd54c9b61",
+    "productType": "Cassava Tubers",
+    "quantity": 200,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "6a9c26d79d3ac6a9ef517286",
+    "preferredPickupDate": "2026-09-12T08:00:00.000Z",
+    "isAccepted": false,
+    "isInTransit": false,
+    "isDelivered": false,
+    "isDelete": false,
+    "requestDate": "2026-09-05T16:25:14.820Z"
+  }
+}
+5. Delete Transport RequestPerforms a soft delete (isDelete: true) on a transport request by ID.Endpoint: DELETE /api/transports/:idHeaders: Authorization: <JWT_TOKEN>Response (200 OK):JSON{
+  "message": "Transport request deleted successfully"
+}
+Driver Operations1. Get Available Transport RequestsRetrieves all open transport requests that are available for drivers to accept.Endpoint: GET /api/driver/availableHeaders: Authorization: <JWT_TOKEN> (Requires Driver role)Response (200 OK):JSON[
+  {
+    "_id": "6a9c4120d619e21dd54c9b5f",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "66d93e10f3c1a892b42d1921",
+    "preferredPickupDate": "2026-09-10T08:00:00.000Z",
+    "isAccepted": false,
+    "isInTransit": false,
+    "isDelivered": false,
+    "isDelete": false,
+    "requestDate": "2026-09-05T16:19:44.659Z"
+  }
+]
+2. Accept Transport RequestAllows a driver to claim and accept a transport job.Endpoint: PATCH /api/driver/accept/:requestIdHeaders: Authorization: <JWT_TOKEN> (Requires Driver role)Response (200 OK):JSON{
+  "message": "Transport request accepted successfully",
+  "transportRequest": {
+    "_id": "6a9c4120d619e21dd54c9b5f",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "66d93e10f3c1a892b42d1921",
+    "acceptedBy": "6a9c26d79d3ac6a9ef517286",
+    "isAccepted": true,
+    "isInTransit": true,
+    "isDelivered": false,
+    "isDelete": false
+  }
+}
+3. Get Accepted Requests (Driver Jobs)Returns an array of all transport requests accepted by the authenticated driver. Returns [] if none exist.Endpoint: GET /api/driver/my-requestsHeaders: Authorization: <JWT_TOKEN> (Requires Driver role)Response (200 OK):JSON[
+  {
+    "_id": "6a9c4120d619e21dd54c9b5f",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "requestedBy": "66d93e10f3c1a892b42d1921",
+    "acceptedBy": "6a9c26d79d3ac6a9ef517286",
+    "isAccepted": true,
+    "isInTransit": true,
+    "isDelivered": false,
+    "isDelete": false,
+    "requestDate": "2026-09-05T16:19:44.659Z"
+  }
+]
+4. Mark Request as DeliveredUpdates a transport request status to delivered upon completing a trip.Endpoint: PATCH /api/driver/delivered/:requestIdHeaders: Authorization: <JWT_TOKEN> (Requires Driver role)Response (200 OK):JSON{
+  "message": "Transport request marked as delivered successfully",
+  "transportRequest": {
+    "_id": "6a9c4120d619e21dd54c9b5f",
+    "productType": "Cassava Tubers",
+    "quantity": 150,
+    "pickupLocation": "Farm Block 4, Idiroko Road, Ota, Ogun State",
+    "deliveryLocation": "Agro Processing Hub, Mile 12 Market, Lagos",
+    "acceptedBy": "6a9c26d79d3ac6a9ef517286",
+    "isAccepted": true,
+    "isInTransit": false,
+    "isDelivered": true,
+    "isDelete": false
+  }
+}
+Installation & SetupClone the repository:Bashgit clone https://github.com/your-username/agro-transport-api.git
+cd agro-transport-api
+Install dependencies:Bashnpm install
+Configure environment variables:Copy the example environment file and fill in your MongoDB connection details and JWT secret.Bashcp .env.example .env
+Start the development server:Bashnpm run dev

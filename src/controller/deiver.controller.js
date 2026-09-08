@@ -3,8 +3,10 @@ import {TransportRequest} from "../model/model.js";
 
 export const availableTransportRequests = async (req, res) => {
   try {
-    if (!req.user || req.user.role !== 'driver'|| req.user.role !== 'admin') {
-      return res.status(403).json({ message: 'Access denied. Only drivers can view available transport requests.' });
+    const allowedRoles = ['driver', 'admin'];
+    if (!req.user || !allowedRoles.includes(req.user.role)) {
+        console.log('User role:', req.user ? req.user.role : 'No user');
+      return res.status(403).json({ message: 'Access denied. Only drivers or admins can view available transport requests.' });
     }
     const transportRequests = await TransportRequest.find({ isAccepted: false, isDelete: false })
     ;
@@ -21,7 +23,8 @@ export const acceptTransportRequest = async (req, res) => {
     } 
     const { requestId } = req.params;
     const driverId=req.user.id;
-    const transportRequest = await TransportRequest.findByIdAndUpdate(requestId, { isAccepted: true, driverId: driverId }, { new: true });
+    const transportRequest = await TransportRequest.findByIdAndUpdate(requestId, { isAccepted: true,
+         acceptedBy: driverId }, { new: true });
     if (!transportRequest) {
       return res.status(404).json({ message: 'Transport request not found.' });
     }

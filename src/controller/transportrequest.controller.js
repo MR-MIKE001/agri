@@ -25,7 +25,9 @@ const {productType,quantity,pickupLocation,deliveryLocation,preferredPickupDate,
 
 export const getAllTransportRequests = async (req, res) => {
   try {
+    
  const transportRequests = await TransportRequest.find({
+   requestedBy:req.user.id,
   $or: [
     { isDelete: false },
     { isDelete: { $exists: false } }

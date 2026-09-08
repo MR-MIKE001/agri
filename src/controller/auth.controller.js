@@ -2,6 +2,7 @@ import { User } from "../model/model.js";
 import { comparePassword, hashPassword } from "../utili/bcrypt.js";
 import { generateToken } from "../middleware/jwt.js";
 import { config } from "dotenv";
+import { updateTransportRequest } from "./transportrequest.controller.js";
 config();
 
 export const signup = async (req, res) => {
@@ -19,12 +20,12 @@ if (password.length < 6) {
     message: "Password must be at least 6 characters long",
   });
 }
-
+  
 // Role validation
-const validRoles = ["admin", "buyer", "farmer", "seller"];
+const validRoles = ["admin", "buyer", "farmer", "seller",'driver'];
 if (!validRoles.includes(role)) {
   return res.status(400).json({
-    message: "Invalid role. Must be admin, buyer, farmer, or seller",
+    message: "Invalid role. Must be admin, buyer, farmer, seller, or driver",
   });
 }
 
@@ -59,15 +60,15 @@ const { token, refreshToken } = generateToken(user);
 
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
- secure: process.env.NODE_ENV === "production" ? true : false, 
-  sameSite:process.env.NODE_ENV === "production" ? "none" : "lax",
+ secure: true ,
+  sameSite:"none" ,
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
 res.cookie("token", token, {
   httpOnly: true,
-  secure: process.nv.NODE_ENV === "production" ? true : false, 
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: true ,
+  sameSite:"none" ,
   maxAge: 24 * 60 * 60 * 1000,
 });
 // Response
@@ -123,15 +124,15 @@ if (!isMatch) {
 const { token, refreshToken } = generateToken(user);
 res.cookie("refreshToken", refreshToken, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production" ? true : false, 
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  ssecure: true ,
+  sameSite:"none" ,
   maxAge: 7 * 24 * 60 * 60 * 1000,
 });
 
 res.cookie("token", token, {
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production" ? true : false, 
-  sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  secure: true ,
+  sameSite:"none" ,
   maxAge: 24 * 60 * 60 * 1000,
 });
 // Response
@@ -155,3 +156,21 @@ message: error.message || "Internal server error",
 }
 };
 
+export const profile=async (req,res)=>{
+  try {
+    if (!req.user) {
+      return res.status(401).json({
+        message: "Unauthorized",
+      });
+    }
+   const user=await User.findById({_id:req.user.id}).select("-password");
+    return res.status(200).json({
+      message: "Profile accessed successfully",
+      user: user,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: error.message || "Internal server error",
+    });
+  }
+};

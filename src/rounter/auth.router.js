@@ -7,7 +7,7 @@ const router = Router();
 router.post("/signup", signup);
 router.post("/signin", signin);
 router.get("/profile", verifyToken,profile);
-router.post("/refresh-token", verifyRefreshToken, (req, res) => {
+router.get("/refresh-token", verifyRefreshToken, (req, res) => {
   const { user } = req;
   const { token, refreshToken } = generateToken(user);
   res.cookie("refreshToken", refreshToken, {

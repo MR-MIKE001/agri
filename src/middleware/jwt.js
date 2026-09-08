@@ -24,7 +24,7 @@ export const verifyToken=(req,res,next)=>{
     }
 }
 export const verifyRefreshToken=(req,res,next)=>{
-    const refreshToken=req.headers.authorization?.split(' ')[1]||req.cookies.refreshToken;
+    const refreshToken=req.headers.authorization.refreshToken||req.cookies.refreshToken;
     if(!refreshToken){
         return res.status(401).json({message:'Access denied. No refresh token provided.'});
     }
